@@ -1,0 +1,10 @@
+node_modules/
+.pnpm-store/
+dist/
+data/*.sqlite
+data/*.sqlite-shm
+data/*.sqlite-wal
+.env
+coverage/
+*.log
+.DS_Store
