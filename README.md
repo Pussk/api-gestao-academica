@@ -99,10 +99,3 @@ tests/
   api.test.ts      Testes dos endpoints
 ```
 
-## Sugestão para a apresentação
-
-1. Explicar que o sistema controla alunos, cursos e as matrículas que ligam os dois.
-2. Mostrar os schemas em `src/schemas.ts` e enviar um dado inválido para demonstrar o Zod.
-3. Criar um aluno e um curso, depois cadastrar uma matrícula usando os ids retornados.
-4. Demonstrar os métodos GET, PUT e DELETE no Postman ou Insomnia.
-5. Rodar `npm test` para mostrar que os três CRUDs foram verificados automaticamente.
