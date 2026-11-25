@@ -28,6 +28,15 @@ export const notFound: RequestHandler = (_request, response) => {
 export const errorHandler: ErrorRequestHandler = (error, _request, response, _next) => {
   const message = error instanceof Error ? error.message : "Erro interno";
 
+  if (error?.type === "entity.parse.failed") {
+    response.status(400).json({ message: "O corpo da requisição deve ser um JSON válido" });
+    return;
+  }
+  if (error?.type === "entity.too.large") {
+    response.status(413).json({ message: "O corpo da requisição excede o limite permitido" });
+    return;
+  }
+
   if (message.includes("UNIQUE constraint failed")) {
     response.status(409).json({ message: "Já existe um registro com esses dados" });
     return;

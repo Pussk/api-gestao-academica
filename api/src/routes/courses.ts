@@ -8,6 +8,7 @@ const mapCourse = (row: CourseRow) => ({
   id: row.id,
   title: row.title,
   workloadHours: row.workload_hours,
+  teacherId: row.teacher_id,
   createdAt: row.created_at,
 });
 
@@ -34,10 +35,10 @@ export function createCoursesRouter(db: AppDatabase) {
   });
 
   router.post("/", validate(courseSchema, "body"), (request, response) => {
-    const { title, workloadHours } = request.body;
+    const { title, workloadHours, teacherId = null } = request.body;
     const row = db
-      .prepare("INSERT INTO courses (title, workload_hours) VALUES (?, ?) RETURNING *")
-      .get(title, workloadHours) as CourseRow;
+      .prepare("INSERT INTO courses (title, workload_hours, teacher_id) VALUES (?, ?, ?) RETURNING *")
+      .get(title, workloadHours, teacherId) as CourseRow;
     response.status(201).json(mapCourse(row));
   });
 
@@ -47,10 +48,13 @@ export function createCoursesRouter(db: AppDatabase) {
     validate(courseSchema, "body"),
     (request, response) => {
       const id = Number(request.params.id);
-      const { title, workloadHours } = request.body;
+      const { title, workloadHours, teacherId } = request.body;
       const row = db
-        .prepare("UPDATE courses SET title = ?, workload_hours = ? WHERE id = ? RETURNING *")
-        .get(title, workloadHours, id) as CourseRow | undefined;
+        .prepare(`UPDATE courses
+          SET title = ?, workload_hours = ?,
+              teacher_id = CASE WHEN ? THEN ? ELSE teacher_id END
+          WHERE id = ? RETURNING *`)
+        .get(title, workloadHours, teacherId === undefined ? 0 : 1, teacherId ?? null, id) as CourseRow | undefined;
 
       if (!row) {
         response.status(404).json({ message: "Curso não encontrado" });

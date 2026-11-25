@@ -9,6 +9,7 @@ export type CourseRow = {
   id: number;
   title: string;
   workload_hours: number;
+  teacher_id: number | null;
   created_at: string;
 };
 
